@@ -8,6 +8,7 @@
 
 package org.opensearch.transport.grpc.ssl;
 
+import io.grpc.ServerInterceptor;
 import org.opensearch.common.network.NetworkService;
 import org.opensearch.common.settings.Settings;
 import org.opensearch.core.common.transport.TransportAddress;
@@ -25,6 +26,7 @@ import java.util.List;
 import io.grpc.BindableService;
 import io.grpc.StatusRuntimeException;
 import io.grpc.health.v1.HealthCheckResponse;
+import org.opensearch.transport.grpc.interceptor.GrpcInterceptorChain;
 
 import static org.opensearch.transport.grpc.ssl.SecureSettingsHelpers.ConnectExceptions.BAD_CERT;
 import static org.opensearch.transport.grpc.ssl.SecureSettingsHelpers.getServerClientAuthNone;
@@ -35,6 +37,8 @@ public class SecureNetty4GrpcServerTransportTests extends OpenSearchTestCase {
     private NetworkService networkService;
     private ThreadPool threadPool;
     private final List<BindableService> services = new ArrayList<>();
+
+    private ServerInterceptor serverInterceptor;
 
     static Settings createSettings() {
         return Settings.builder().put(SecureNetty4GrpcServerTransport.SETTING_GRPC_PORT.getKey(), getPortRange()).build();
@@ -48,6 +52,7 @@ public class SecureNetty4GrpcServerTransportTests extends OpenSearchTestCase {
         Settings settings = Settings.builder().put("node.name", "test-node").put("grpc.netty.executor_count", 4).build();
         ExecutorBuilder<?> grpcExecutorBuilder = new FixedExecutorBuilder(settings, "grpc", 4, 1000, "thread_pool.grpc");
         threadPool = new ThreadPool(settings, grpcExecutorBuilder);
+        serverInterceptor = new GrpcInterceptorChain(Collections.emptyList());
     }
 
     @After
@@ -66,7 +71,7 @@ public class SecureNetty4GrpcServerTransportTests extends OpenSearchTestCase {
                 networkService,
                 threadPool,
                 getServerClientAuthNone(),
-                null
+                serverInterceptor
             )
         ) {
             transport.start();
@@ -86,7 +91,7 @@ public class SecureNetty4GrpcServerTransportTests extends OpenSearchTestCase {
                 networkService,
                 threadPool,
                 getServerClientAuthNone(),
-                null
+                serverInterceptor
             )
         ) {
             transport.start();
@@ -113,7 +118,7 @@ public class SecureNetty4GrpcServerTransportTests extends OpenSearchTestCase {
                 networkService,
                 threadPool,
                 getServerClientAuthOptional(),
-                null
+                serverInterceptor
             )
         ) {
             transport.start();
@@ -145,7 +150,7 @@ public class SecureNetty4GrpcServerTransportTests extends OpenSearchTestCase {
                 networkService,
                 threadPool,
                 getServerClientAuthRequired(),
-                null
+                serverInterceptor
             )
         ) {
             transport.start();

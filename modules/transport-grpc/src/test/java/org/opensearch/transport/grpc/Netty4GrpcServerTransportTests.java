@@ -63,7 +63,7 @@ public class Netty4GrpcServerTransportTests extends OpenSearchTestCase {
     }
 
     public void testBasicStartAndStop() {
-        try (Netty4GrpcServerTransport transport = new Netty4GrpcServerTransport(createSettings(), services, networkService, threadPool, new ArrayList<>())) {
+        try (Netty4GrpcServerTransport transport = new Netty4GrpcServerTransport(createSettings(), services, networkService, threadPool)) {
             transport.start();
 
             MatcherAssert.assertThat(transport.getBoundAddress().boundAddresses(), not(emptyArray()));
@@ -74,7 +74,7 @@ public class Netty4GrpcServerTransportTests extends OpenSearchTestCase {
     }
 
     public void testGrpcTransportHealthcheck() {
-        try (Netty4GrpcServerTransport transport = new Netty4GrpcServerTransport(createSettings(), services, networkService, threadPool, new ArrayList<>())) {
+        try (Netty4GrpcServerTransport transport = new Netty4GrpcServerTransport(createSettings(), services, networkService, threadPool)) {
             transport.start();
             final TransportAddress remoteAddress = randomFrom(transport.getBoundAddress().boundAddresses());
             try (NettyGrpcClient client = new NettyGrpcClient.Builder().setAddress(remoteAddress).build()) {
@@ -87,7 +87,7 @@ public class Netty4GrpcServerTransportTests extends OpenSearchTestCase {
     }
 
     public void testGrpcTransportListServices() {
-        try (Netty4GrpcServerTransport transport = new Netty4GrpcServerTransport(createSettings(), services, networkService, threadPool, new ArrayList<>())) {
+        try (Netty4GrpcServerTransport transport = new Netty4GrpcServerTransport(createSettings(), services, networkService, threadPool)) {
             transport.start();
             final TransportAddress remoteAddress = randomFrom(transport.getBoundAddress().boundAddresses());
             try (NettyGrpcClient client = new NettyGrpcClient.Builder().setAddress(remoteAddress).build()) {
@@ -103,7 +103,7 @@ public class Netty4GrpcServerTransportTests extends OpenSearchTestCase {
         // Create settings with a specific port
         Settings settings = Settings.builder().put(Netty4GrpcServerTransport.SETTING_GRPC_PORT.getKey(), "9000-9010").build();
 
-        try (Netty4GrpcServerTransport transport = new Netty4GrpcServerTransport(settings, services, networkService, threadPool, new ArrayList<>())) {
+        try (Netty4GrpcServerTransport transport = new Netty4GrpcServerTransport(settings, services, networkService, threadPool)) {
             transport.start();
 
             MatcherAssert.assertThat(transport.getBoundAddress().boundAddresses(), not(emptyArray()));
@@ -122,7 +122,7 @@ public class Netty4GrpcServerTransportTests extends OpenSearchTestCase {
             .put(Netty4GrpcServerTransport.SETTING_GRPC_PUBLISH_PORT.getKey(), 9000)
             .build();
 
-        try (Netty4GrpcServerTransport transport = new Netty4GrpcServerTransport(settings, services, networkService, threadPool, new ArrayList<>())) {
+        try (Netty4GrpcServerTransport transport = new Netty4GrpcServerTransport(settings, services, networkService, threadPool)) {
             transport.start();
 
             MatcherAssert.assertThat(transport.getBoundAddress().boundAddresses(), not(emptyArray()));
@@ -141,7 +141,7 @@ public class Netty4GrpcServerTransportTests extends OpenSearchTestCase {
             .put(Netty4GrpcServerTransport.SETTING_GRPC_HOST.getKey(), "127.0.0.1")
             .build();
 
-        try (Netty4GrpcServerTransport transport = new Netty4GrpcServerTransport(settings, services, networkService, threadPool, new ArrayList<>())) {
+        try (Netty4GrpcServerTransport transport = new Netty4GrpcServerTransport(settings, services, networkService, threadPool)) {
             transport.start();
 
             MatcherAssert.assertThat(transport.getBoundAddress().boundAddresses(), not(emptyArray()));
@@ -164,7 +164,7 @@ public class Netty4GrpcServerTransportTests extends OpenSearchTestCase {
             .put(Netty4GrpcServerTransport.SETTING_GRPC_BIND_HOST.getKey(), "127.0.0.1")
             .build();
 
-        try (Netty4GrpcServerTransport transport = new Netty4GrpcServerTransport(settings, services, networkService, threadPool, new ArrayList<>())) {
+        try (Netty4GrpcServerTransport transport = new Netty4GrpcServerTransport(settings, services, networkService, threadPool)) {
             transport.start();
 
             MatcherAssert.assertThat(transport.getBoundAddress().boundAddresses(), not(emptyArray()));
@@ -187,7 +187,7 @@ public class Netty4GrpcServerTransportTests extends OpenSearchTestCase {
             .put(Netty4GrpcServerTransport.SETTING_GRPC_PUBLISH_HOST.getKey(), "127.0.0.1")
             .build();
 
-        try (Netty4GrpcServerTransport transport = new Netty4GrpcServerTransport(settings, services, networkService, threadPool, new ArrayList<>())) {
+        try (Netty4GrpcServerTransport transport = new Netty4GrpcServerTransport(settings, services, networkService, threadPool)) {
             transport.start();
 
             MatcherAssert.assertThat(transport.getBoundAddress().boundAddresses(), not(emptyArray()));
@@ -210,7 +210,7 @@ public class Netty4GrpcServerTransportTests extends OpenSearchTestCase {
             .put(Netty4GrpcServerTransport.SETTING_GRPC_WORKER_COUNT.getKey(), 4)
             .build();
 
-        try (Netty4GrpcServerTransport transport = new Netty4GrpcServerTransport(settings, services, networkService, threadPool, new ArrayList<>())) {
+        try (Netty4GrpcServerTransport transport = new Netty4GrpcServerTransport(settings, services, networkService, threadPool)) {
             transport.start();
 
             MatcherAssert.assertThat(transport.getBoundAddress().boundAddresses(), not(emptyArray()));

@@ -85,7 +85,7 @@ public final class GrpcPlugin extends Plugin implements NetworkPlugin, Extensibl
     private final List<QueryBuilderProtoConverter> queryConverters = new ArrayList<>();
     private QueryBuilderProtoConverterRegistryImpl queryRegistry;
     private AbstractQueryBuilderProtoUtils queryUtils;
-    private ServerInterceptor serverInterceptor;
+    private ServerInterceptor serverInterceptor = new GrpcInterceptorChain(Collections.emptyList());
 
     /**
      * Creates a new GrpcPlugin instance.
@@ -212,7 +212,7 @@ public final class GrpcPlugin extends Plugin implements NetworkPlugin, Extensibl
         );
         return Collections.singletonMap(
             GRPC_TRANSPORT_SETTING_KEY,
-            () -> new Netty4GrpcServerTransport(settings, grpcServices, networkService, threadPool, serverInterceptors)
+            () -> new Netty4GrpcServerTransport(settings, grpcServices, networkService, threadPool, serverInterceptor)
         );
     }
 
@@ -259,7 +259,8 @@ public final class GrpcPlugin extends Plugin implements NetworkPlugin, Extensibl
                 settings,
                 grpcServices,
                 networkService,
-               threadPool, secureAuxTransportSettingsProvider,
+                threadPool,
+                secureAuxTransportSettingsProvider,
                 serverInterceptor
             )
         );
