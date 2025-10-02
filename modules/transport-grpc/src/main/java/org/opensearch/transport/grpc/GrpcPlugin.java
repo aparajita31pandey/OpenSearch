@@ -33,8 +33,8 @@ import org.opensearch.threadpool.ThreadPool;
 import org.opensearch.transport.AuxTransport;
 import org.opensearch.transport.client.Client;
 import org.opensearch.transport.grpc.interceptor.GrpcInterceptorChain;
-import org.opensearch.transport.grpc.interceptor.GrpcInterceptorProvider;
-import org.opensearch.transport.grpc.interceptor.OrderedGrpcInterceptor;
+import org.opensearch.transport.grpc.spi.GrpcInterceptorProvider;
+import org.opensearch.transport.grpc.spi.OrderedGrpcInterceptor;
 import org.opensearch.transport.grpc.proto.request.search.query.AbstractQueryBuilderProtoUtils;
 import org.opensearch.transport.grpc.proto.request.search.query.QueryBuilderProtoConverterRegistryImpl;
 import org.opensearch.transport.grpc.services.DocumentServiceImpl;
@@ -126,7 +126,7 @@ public final class GrpcPlugin extends Plugin implements NetworkPlugin, Extensibl
             // Validate that no two interceptors have the same order
             Map<Integer, List<OrderedGrpcInterceptor>> orderMap = new HashMap<>();
             for (OrderedGrpcInterceptor interceptor : orderedList) {
-                int order = interceptor.getOrder();
+                int order = interceptor.order();
                 orderMap.computeIfAbsent(order, k -> new ArrayList<>()).add(interceptor);
             }
 
@@ -142,7 +142,7 @@ public final class GrpcPlugin extends Plugin implements NetworkPlugin, Extensibl
             }
 
             // Sort by order and create a chain - similar to OpenSearch's ActionFilter pattern
-            orderedList.sort(Comparator.comparingInt(OrderedGrpcInterceptor::getOrder));
+            orderedList.sort(Comparator.comparingInt(OrderedGrpcInterceptor::order));
 
             if (!orderedList.isEmpty()) {
                 // Create a single chain interceptor that manages the execution
